@@ -1,192 +1,51 @@
+import Link from 'next/link';
+
 export default function Footer() {
   return (
-    <footer className="pb-4 text-gray-200">
-      <div className="max-w-5xl xl:max-w-5xl mx-auto divide-y divide-gray-900 px-4 sm:px-6 md:px-8">
-        <ul className="text-sm font-medium sm:pb-20 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-10">
-          <li className="space-y-5 row-span-2">
-            <h2 className="text-2xl tracking-wide text-white">Company</h2>
-            <ul className="space-y-4 text-md">
+    <footer className="bg-gray-800 text-white">
+      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Student City Hub</h3>
+            <p className="text-gray-300">
+              Your one-stop resource for navigating city life as a student.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
+            <ul className="space-y-2">
               <li>
-                <a
-                  className="hover:text-white transition-colors duration-200 text-xl"
-                  href="/"
-                >
-                  Jobs
-                </a>
+                <Link href="/" className="text-gray-300 hover:text-white transition">
+                  Home
+                </Link>
               </li>
               <li>
-                <a
-                  className="hover:text-white transition-colors duration-200 text-xl"
-                  href="/"
-                >
-                  Merch
-                </a>
-              </li>{" "}
+                <Link href="/accommodation" className="text-gray-300 hover:text-white transition">
+                  Accommodation
+                </Link>
+              </li>
               <li>
-                <a
-                  className="hover:text-white transition-colors duration-200 text-xl"
-                  href="/"
-                >
-                  Brand
-                </a>
-              </li>{" "}
-              <li>
-                <a
-                  className="hover:text-white transition-colors duration-200 text-xl"
-                  href="/"
-                >
-                  Meetups
-                </a>
+                <Link href="/city-tips" className="text-gray-300 hover:text-white transition">
+                  City Tips
+                </Link>
               </li>
             </ul>
-          </li>
-          <li className="space-y-5 row-span-2">
-            <h2 className="text-2xl tracking-wide text-white">Newsroom</h2>
-            <ul className="space-y-4">
-              <li>
-                <a
-                  className="hover:text-white transition-colors duration-200 text-xl"
-                  href="/"
-                >
-                  News
-                </a>
-              </li>
-              <li>
-                <a
-                  className="hover:text-white transition-colors duration-200 text-xl"
-                  href="/"
-                >
-                  Press
-                </a>
-              </li>
-              <li>
-                <a
-                  className="hover:text-white transition-colors duration-200 text-xl"
-                  href="/"
-                >
-                  Blog
-                </a>
-              </li>
-            </ul>
-          </li>
-          <li className="space-y-5 row-span-2">
-            <h2 className="text-2xl tracking-wide text-white">Products</h2>
-            <ul className="space-y-4">
-              <li>
-                <a
-                  className="hover:text-white transition-colors duration-200 text-xl"
-                  href="/"
-                >
-                  Hosting
-                </a>
-              </li>
-              <li>
-                <a
-                  className="hover:text-white transition-colors duration-200 text-xl"
-                  href="/"
-                >
-                  Domains
-                </a>
-              </li>
-              <li>
-                <a
-                  className="hover:text-white transition-colors duration-200 text-xl"
-                  href="/"
-                >
-                  Security
-                </a>
-              </li>
-              <li>
-                <a
-                  className="hover:text-white transition-colors duration-200 text-xl"
-                  href="/"
-                >
-                  SSL
-                </a>
-              </li>
-            </ul>
-          </li>
-          <li className="space-y-5">
-            <h2 className="text-2xl tracking-wide text-white">Connect</h2>
-            <ul className="space-y-4">
-              <li>
-                <a
-                  className="hover:text-white transition-colors duration-200 text-xl"
-                  href="/"
-                >
-                  Twitter
-                </a>
-              </li>
-              <li>
-                <a
-                  className="hover:text-white transition-colors duration-200 text-xl"
-                  href="/"
-                >
-                  Facebook
-                </a>
-              </li>
-              <li>
-                <a
-                  className="hover:text-white transition-colors duration-200 font-semibold text-xl"
-                  href="/"
-                >
-                  Instagram
-                </a>
-              </li>
-            </ul>
-          </li>
-        </ul>
-        <div className="flex flex-col-reverse justify-between pt-5 pb-4 border-t lg:flex-row bg-top border-black">
-          <ul className="flex flex-col space-y-2 lg:mb-0 sm:space-y-0 sm:space-x-5 sm:flex-row">
-            <li>
-              <a
-                href="/"
-                className="text-md text-gray-200 hover:text-white transition-colors duration-300 hover:text-deep-purple-accent-400 font-semibold"
-              >
-                Terms of Service
-              </a>
-            </li>
-            <li>
-              <a
-                href="/"
-                className="text-md text-gray-200 hover:text-white transition-colors duration-300 hover:text-deep-purple-accent-400 font-semibold"
-              >
-                Privacy Policy
-              </a>
-            </li>
-            <li>
-              <a
-                href="/"
-                className="text-md text-gray-200 hover:text-white transition-colors duration-300 hover:text-deep-purple-accent-400 font-semibold"
-              >
-                Ad Choices
-              </a>
-            </li>
-            <li>
-              <a
-                href="/"
-                className="text-md text-gray-200 hover:text-white transition-colors duration-300 hover:text-deep-purple-accent-400 font-semibold"
-              >
-                Cookie Policy
-              </a>
-            </li>
-            <li>
-              <a
-                href="/"
-                className="text-md text-gray-200 hover:text-white transition-colors duration-300 hover:text-deep-purple-accent-400 font-semibold"
-              >
-                Partners
-              </a>
-            </li>
-          </ul>
-          <ul className="flex flex-col mb-3 space-y-2 lg:mb-0 sm:space-y-0 sm:space-x-5 sm:flex-row">
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
+            <p className="text-gray-300 mb-2">
+              Have questions or suggestions?
+            </p>
             <a
-              href="/"
-              className="text-md text-gray-200 hover:text-white transition-colors duration-300 hover:text-deep-purple-accent-400 font-semibold tracking-tight"
+              href="mailto:info@studentcityhub.com"
+              className="text-indigo-400 hover:text-indigo-300 transition"
             >
-              © 2021 Company Inc.
+              info@studentcityhub.com
             </a>
-          </ul>
+          </div>
+        </div>
+        <div className="mt-8 pt-8 border-t border-gray-700 text-center text-gray-400">
+          <p>&copy; {new Date().getFullYear()} Student City Hub. All rights reserved.</p>
         </div>
       </div>
     </footer>

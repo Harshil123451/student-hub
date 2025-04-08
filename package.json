@@ -1,5 +1,5 @@
 {
-  "name": "nine4-3",
+  "name": "student-city-hub",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "autoprefixer": "^10.4.17",
-    "next": "^13.5.6",
+    "next": "^14.1.0",
     "next-seo": "^6.4.0",
     "postcss": "^8.4.35",
     "react": "^18.2.0",
