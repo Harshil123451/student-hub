@@ -1,169 +1,141 @@
 import Link from 'next/link';
 
 export default function CityTips() {
-  const transportTips = [
-    {
-      title: 'Student Bus Pass',
-      description: 'Get a student bus pass for unlimited travel within the city. Available at the student union office.',
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
-        </svg>
-      )
+  const sections = {
+    transport: {
+      title: 'Transport Tips',
+      tips: [
+        {
+          title: 'Student Bus Pass',
+          description: 'Get unlimited travel with a student bus pass. Save up to 30% on regular fares.',
+          icon: (
+            <svg className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+            </svg>
+          )
+        },
+        {
+          title: 'Bike Sharing',
+          description: 'Use city bikes for short trips. Download the bike-sharing app for real-time availability.',
+          icon: (
+            <svg className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          )
+        },
+        {
+          title: 'Night Transport',
+          description: 'Night buses run on major routes. Check the night service schedule for your area.',
+          icon: (
+            <svg className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+          )
+        }
+      ]
     },
-    {
-      title: 'Bike Sharing',
-      description: 'Use the city\'s bike sharing program for short trips. Student discount available with your university email.',
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
-      )
+    food: {
+      title: 'Food Spots',
+      tips: [
+        {
+          title: 'Budget Cafes',
+          description: 'Find student-friendly cafes near campus. Many offer student discounts with valid ID.',
+          icon: (
+            <svg className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          )
+        },
+        {
+          title: 'Street Food Markets',
+          description: 'Visit local food markets for affordable and diverse dining options.',
+          icon: (
+            <svg className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+          )
+        },
+        {
+          title: 'Meal Prep Tips',
+          description: 'Save money by cooking at home. Find weekly grocery deals at local supermarkets.',
+          icon: (
+            <svg className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+          )
+        }
+      ]
     },
-    {
-      title: 'Train Connections',
-      description: 'Book train tickets in advance for weekend trips. Student railcards offer 1/3 off all rail travel.',
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-        </svg>
-      )
+    study: {
+      title: 'Study Places',
+      tips: [
+        {
+          title: 'University Library',
+          description: '24/7 access during exam periods. Book study rooms in advance for group work.',
+          icon: (
+            <svg className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+          )
+        },
+        {
+          title: 'Study Cafes',
+          description: 'Find cafes with free Wi-Fi and power outlets. Many offer student discounts.',
+          icon: (
+            <svg className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+          )
+        },
+        {
+          title: 'Quiet Spots',
+          description: 'Discover hidden study spots around campus. Perfect for focused study sessions.',
+          icon: (
+            <svg className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+            </svg>
+          )
+        }
+      ]
     }
-  ];
-
-  const foodSpots = [
-    {
-      name: 'The Student Kitchen',
-      type: 'Cafe',
-      description: 'Budget-friendly cafe with student discounts. Great for quick meals between classes.',
-      location: 'Near the university library',
-      priceRange: '££'
-    },
-    {
-      name: 'Global Bites',
-      type: 'Restaurant',
-      description: 'International cuisine with student-friendly prices. Perfect for group dinners.',
-      location: 'City center',
-      priceRange: '£££'
-    },
-    {
-      name: 'Quick & Healthy',
-      type: 'Takeaway',
-      description: 'Healthy takeaway options with nutritional information. Student meal deals available.',
-      location: 'Campus food court',
-      priceRange: '£'
-    }
-  ];
-
-  const studyPlaces = [
-    {
-      name: 'University Library',
-      description: '24/7 access during exam periods. Quiet study areas and group study rooms available.',
-      features: ['Free Wi-Fi', 'Printing facilities', 'Bookable study rooms', 'Coffee shop'],
-      image: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'
-    },
-    {
-      name: 'City Public Library',
-      description: 'A quiet space in the city center with plenty of natural light. Great for individual study.',
-      features: ['Free Wi-Fi', 'Comfortable seating', 'Natural light', 'Reference materials'],
-      image: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'
-    },
-    {
-      name: 'Study Cafe',
-      description: 'A cozy cafe with a dedicated study area. Perfect for a change of scenery.',
-      features: ['Power outlets', 'Coffee and snacks', 'Background music', 'Friendly atmosphere'],
-      image: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'
-    }
-  ];
+  };
 
   return (
-    <div className="py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">City Tips for Students</h1>
-          <p className="mt-4 text-xl text-gray-600">
-            Everything you need to know about navigating city life as a student
-          </p>
-        </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="text-center mb-12">
+        <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">City Tips</h1>
+        <p className="mt-4 text-xl text-gray-600">
+          Essential tips to help you navigate student life in the city
+        </p>
+      </div>
 
-        {/* Transport Tips Section */}
-        <section className="mb-16">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Transport Tips</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {transportTips.map((tip, index) => (
-              <div key={index} className="bg-white p-6 rounded-lg shadow-md">
-                <div className="text-indigo-600 mb-4">
-                  {tip.icon}
+      {Object.entries(sections).map(([key, section]) => (
+        <section key={key} className="mb-16">
+          <h2 className="text-2xl font-bold text-gray-900 mb-8">{section.title}</h2>
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {section.tips.map((tip, index) => (
+              <div key={index} className="bg-white rounded-lg shadow-md p-6">
+                <div className="flex items-center mb-4">
+                  <div className="flex-shrink-0">
+                    {tip.icon}
+                  </div>
+                  <h3 className="ml-3 text-lg font-medium text-gray-900">{tip.title}</h3>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{tip.title}</h3>
                 <p className="text-gray-600">{tip.description}</p>
               </div>
             ))}
           </div>
         </section>
+      ))}
 
-        {/* Food Spots Section */}
-        <section className="mb-16">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Food Spots</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {foodSpots.map((spot, index) => (
-              <div key={index} className="bg-white p-6 rounded-lg shadow-md">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-lg font-semibold text-gray-900">{spot.name}</h3>
-                  <span className="text-gray-500 text-sm">{spot.priceRange}</span>
-                </div>
-                <p className="text-indigo-600 text-sm mb-2">{spot.type}</p>
-                <p className="text-gray-600 mb-2">{spot.description}</p>
-                <p className="text-gray-500 text-sm">{spot.location}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Study Places Section */}
-        <section className="mb-16">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Study Places</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {studyPlaces.map((place, index) => (
-              <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
-                <div className="h-48 w-full relative">
-                  <img
-                    src={place.image}
-                    alt={place.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{place.name}</h3>
-                  <p className="text-gray-600 mb-4">{place.description}</p>
-                  <div>
-                    <h4 className="text-sm font-medium text-gray-900 mb-2">Features:</h4>
-                    <ul className="grid grid-cols-2 gap-2">
-                      {place.features.map((feature, featureIndex) => (
-                        <li key={featureIndex} className="flex items-center text-sm text-gray-600">
-                          <svg className="h-4 w-4 text-indigo-500 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <div className="text-center">
-          <p className="text-gray-600 mb-4">Looking for accommodation in the city?</p>
-          <Link 
-            href="/accommodation" 
-            className="inline-block bg-indigo-600 text-white py-2 px-6 rounded-md hover:bg-indigo-700 transition"
-          >
-            Browse Accommodations
-          </Link>
-        </div>
+      <div className="text-center">
+        <p className="text-gray-600 mb-4">Looking for accommodation in the city?</p>
+        <Link 
+          href="/accommodation" 
+          className="inline-block bg-indigo-600 text-white py-2 px-6 rounded-md hover:bg-indigo-700 transition"
+        >
+          Browse Accommodations
+        </Link>
       </div>
     </div>
   );

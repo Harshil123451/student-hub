@@ -6,8 +6,8 @@ import Footer from '../components/Footer';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: 'Student City Hub',
-  description: 'Your guide to navigating city life as a student',
+  title: 'Student Hub',
+  description: 'Your guide to student life in the city',
 };
 
 export default function RootLayout({ children }) {
@@ -15,7 +15,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
         <Navbar />
-        <main className="min-h-screen bg-gray-50">
+        <main className="min-h-screen bg-gray-50 pt-4">
           {children}
         </main>
         <Footer />

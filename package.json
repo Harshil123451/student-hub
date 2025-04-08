@@ -1,5 +1,5 @@
 {
-  "name": "student-city-hub",
+  "name": "student-hub",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,14 +8,12 @@
     "start": "next start"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.39.3",
     "autoprefixer": "^10.4.17",
     "next": "^14.1.0",
-    "next-seo": "^6.4.0",
     "postcss": "^8.4.35",
     "react": "^18.2.0",
-    "react-countup": "^6.5.0",
     "react-dom": "^18.2.0",
-    "react-visibility-sensor": "^5.1.1",
     "tailwindcss": "^3.4.1"
   },
   "engines": {
