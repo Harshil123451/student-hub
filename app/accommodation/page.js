@@ -13,7 +13,7 @@ export default function Accommodation() {
     async function fetchAccommodations() {
       try {
         const { data, error } = await supabase
-          .from('accommodations')
+          .from('listings')
           .select('*')
           .order('price');
 
@@ -63,27 +63,36 @@ export default function Accommodation() {
       </div>
 
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {accommodations.map((accommodation) => (
-          <div key={accommodation.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-            {accommodation.image_url && (
+        {accommodations.map((listing) => (
+          <div key={listing.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+            {listing.image_url && (
               <div className="h-48 w-full relative">
                 <img
-                  src={accommodation.image_url}
-                  alt={accommodation.title}
+                  src={listing.image_url}
+                  alt={listing.title}
                   className="w-full h-full object-cover"
                 />
               </div>
             )}
             <div className="p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">{accommodation.title}</h2>
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-indigo-600 font-medium">£{accommodation.price}/week</span>
-                <span className="text-gray-500">{accommodation.location}</span>
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="text-xl font-semibold text-gray-900">{listing.title}</h2>
+                <span className="px-2 py-1 text-sm bg-indigo-100 text-indigo-700 rounded">{listing.type}</span>
               </div>
-              {accommodation.description && (
-                <p className="text-gray-600 mb-4">{accommodation.description}</p>
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-indigo-600 font-medium">£{listing.price}/week</span>
+                <span className="text-gray-500">{listing.location}</span>
+              </div>
+              {listing.description && (
+                <p className="text-gray-600 mb-4 line-clamp-2">{listing.description}</p>
               )}
-              <button className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition">
+              <div className="border-t pt-4 mt-4">
+                <h3 className="text-sm font-medium text-gray-900 mb-2">Contact Information:</h3>
+                <p className="text-sm text-gray-600">{listing.contact_name}</p>
+                <p className="text-sm text-gray-600">{listing.contact_email}</p>
+                <p className="text-sm text-gray-600">{listing.contact_phon}</p>
+              </div>
+              <button className="mt-4 w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition">
                 View Details
               </button>
             </div>
