@@ -73,13 +73,21 @@ export default function Accommodation() {
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {accommodations.map((listing) => (
           <div key={listing.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-            {listing.image_url && (
+            {listing.image_url ? (
               <div className="h-48 w-full relative">
                 <img
                   src={listing.image_url}
                   alt={listing.title}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'https://via.placeholder.com/400x300?text=No+Image+Available';
+                  }}
                 />
+              </div>
+            ) : (
+              <div className="h-48 w-full relative bg-gray-100 flex items-center justify-center">
+                <span className="text-gray-400">No image available</span>
               </div>
             )}
             <div className="p-6">
@@ -100,9 +108,12 @@ export default function Accommodation() {
                 <p className="text-sm text-gray-600">{listing.contact_email}</p>
                 <p className="text-sm text-gray-600">{listing.contact_phon}</p>
               </div>
-              <button className="mt-4 w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition">
+              <Link
+                href={`/accommodation/${listing.id}`}
+                className="mt-4 w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition inline-block text-center"
+              >
                 View Details
-              </button>
+              </Link>
             </div>
           </div>
         ))}
