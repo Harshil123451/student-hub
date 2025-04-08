@@ -8,6 +8,26 @@ export default function Accommodation() {
   const [accommodations, setAccommodations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedType, setSelectedType] = useState('');
+  const [priceRange, setPriceRange] = useState('');
+  const [filteredAccommodations, setFilteredAccommodations] = useState([]);
+
+  const accommodationTypes = [
+    'Studio',
+    'Apartment',
+    'House Share',
+    'Student Hall',
+    'Private Hall',
+    'Flat Share'
+  ];
+
+  const priceRanges = [
+    { label: 'Under £100', value: '0-100' },
+    { label: '£100 - £200', value: '100-200' },
+    { label: '£200 - £300', value: '200-300' },
+    { label: 'Over £300', value: '300+' }
+  ];
 
   useEffect(() => {
     async function fetchAccommodations() {
@@ -19,6 +39,7 @@ export default function Accommodation() {
 
         if (error) throw error;
         setAccommodations(data);
+        setFilteredAccommodations(data);
       } catch (error) {
         setError('Error fetching accommodations');
         console.error('Error:', error);
@@ -29,6 +50,42 @@ export default function Accommodation() {
 
     fetchAccommodations();
   }, []);
+
+  useEffect(() => {
+    let filtered = [...accommodations];
+
+    // Apply search filter
+    if (searchQuery) {
+      filtered = filtered.filter(listing => 
+        listing.location.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Apply type filter
+    if (selectedType) {
+      filtered = filtered.filter(listing => listing.type === selectedType);
+    }
+
+    // Apply price range filter
+    if (priceRange) {
+      const [min, max] = priceRange.split('-').map(Number);
+      filtered = filtered.filter(listing => {
+        if (max) {
+          return listing.price >= min && listing.price < max;
+        } else {
+          return listing.price >= min;
+        }
+      });
+    }
+
+    setFilteredAccommodations(filtered);
+  }, [searchQuery, selectedType, priceRange, accommodations]);
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setSelectedType('');
+    setPriceRange('');
+  };
 
   if (loading) {
     return (
@@ -70,8 +127,81 @@ export default function Accommodation() {
         </div>
       </div>
 
+      {/* Search and Filters */}
+      <div className="mb-8 bg-white p-4 rounded-lg shadow-sm">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Search Bar */}
+          <div>
+            <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">
+              Search by Suburb
+            </label>
+            <input
+              type="text"
+              id="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="e.g., Carlton, CBD"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            />
+          </div>
+
+          {/* Type Filter */}
+          <div>
+            <label htmlFor="type" className="block text-sm font-medium text-gray-700 mb-1">
+              Property Type
+            </label>
+            <select
+              id="type"
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            >
+              <option value="">All Types</option>
+              {accommodationTypes.map(type => (
+                <option key={type} value={type}>{type}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Price Range Filter */}
+          <div>
+            <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
+              Price Range (£/week)
+            </label>
+            <select
+              id="price"
+              value={priceRange}
+              onChange={(e) => setPriceRange(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            >
+              <option value="">All Prices</option>
+              {priceRanges.map(range => (
+                <option key={range.value} value={range.value}>{range.label}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Clear Filters Button */}
+        {(searchQuery || selectedType || priceRange) && (
+          <div className="mt-4 flex justify-end">
+            <button
+              onClick={clearFilters}
+              className="text-sm text-indigo-600 hover:text-indigo-900 font-medium"
+            >
+              Clear Filters
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Results Count */}
+      <div className="mb-4 text-sm text-gray-600">
+        Showing {filteredAccommodations.length} of {accommodations.length} listings
+      </div>
+
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {accommodations.map((listing) => (
+        {filteredAccommodations.map((listing) => (
           <div key={listing.id} className="bg-white rounded-lg shadow-md overflow-hidden">
             {listing.image_url ? (
               <div className="h-48 w-full relative">
@@ -119,9 +249,9 @@ export default function Accommodation() {
         ))}
       </div>
 
-      {accommodations.length === 0 && (
+      {filteredAccommodations.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-600">No accommodations found.</p>
+          <p className="text-gray-600">No accommodations found matching your criteria.</p>
         </div>
       )}
 
