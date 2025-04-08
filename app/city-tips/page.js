@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
+import Link from 'next/link';
 
 export default function CityTips() {
   const [tips, setTips] = useState({
@@ -88,7 +89,13 @@ export default function CityTips() {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">🎓 Student Tips</h1>
-          <p className="text-xl text-gray-600">Your guide to making the most of student life in the city</p>
+          <p className="text-xl text-gray-600 mb-6">Your guide to making the most of student life in the city</p>
+          <Link
+            href="/city-tips/submit"
+            className="inline-block bg-indigo-600 text-white py-2 px-6 rounded-md hover:bg-indigo-700 transition"
+          >
+            Submit a Tip
+          </Link>
         </div>
 
         {loading ? (
