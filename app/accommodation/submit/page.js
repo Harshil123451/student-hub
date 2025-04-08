@@ -3,22 +3,104 @@
 import { useState } from 'react';
 import { supabase } from '../../../lib/supabaseClient';
 import Link from 'next/link';
+import LoadingSpinner from '../../../components/LoadingSpinner';
+import ErrorMessage from '../../../components/ErrorMessage';
 
-export default function SubmitAccommodation() {
+export default function SubmitListing() {
   const [formData, setFormData] = useState({
     title: '',
     location: '',
     price: '',
+    type: 'Studio',
     description: '',
-    type: '',
     contact_name: '',
     contact_email: '',
     contact_phone: '',
-    image_url: ''
+    image_url: '',
+    availability: 'Available Now'
   });
+
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState(null);
+  const [submitError, setSubmitError] = useState(null);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  const roomTypes = ['Studio', '1 Bedroom', '2 Bedrooms', '3+ Bedrooms', 'Shared Room'];
+  const availabilityOptions = ['Available Now', 'Available Next Month', 'Available in 2+ Months'];
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.title.trim()) {
+      newErrors.title = 'Title is required';
+    }
+    
+    if (!formData.location.trim()) {
+      newErrors.location = 'Suburb is required';
+    }
+    
+    if (!formData.price || formData.price <= 0) {
+      newErrors.price = 'Valid price is required';
+    }
+
+    if (!formData.contact_name.trim()) {
+      newErrors.contact_name = 'Contact name is required';
+    }
+
+    if (!formData.contact_email.trim()) {
+      newErrors.contact_email = 'Contact email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.contact_email)) {
+      newErrors.contact_email = 'Invalid email format';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitError(null);
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const { data, error } = await supabase
+        .from('listings')
+        .insert([
+          {
+            ...formData,
+            price: parseFloat(formData.price),
+            created_at: new Date().toISOString()
+          }
+        ]);
+
+      if (error) throw error;
+
+      setSubmitSuccess(true);
+      setFormData({
+        title: '',
+        location: '',
+        price: '',
+        type: 'Studio',
+        description: '',
+        contact_name: '',
+        contact_email: '',
+        contact_phone: '',
+        image_url: '',
+        availability: 'Available Now'
+      });
+
+    } catch (error) {
+      console.error('Error submitting listing:', error);
+      setSubmitError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,72 +108,34 @@ export default function SubmitAccommodation() {
       ...prev,
       [name]: value
     }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setSuccess(false);
-
-    try {
-      // Convert price to number
-      const numericPrice = parseFloat(formData.price);
-      if (isNaN(numericPrice)) {
-        throw new Error('Price must be a valid number');
-      }
-
-      const { error } = await supabase
-        .from('listings')
-        .insert([
-          {
-            ...formData,
-            price: numericPrice,
-            created_at: new Date().toISOString(),
-          }
-        ]);
-
-      if (error) throw error;
-
-      setSuccess(true);
-      setFormData({
-        title: '',
-        location: '',
-        price: '',
-        description: '',
-        type: '',
-        contact_name: '',
-        contact_email: '',
-        contact_phone: '',
-        image_url: ''
-      });
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: null
+      }));
     }
   };
 
-  const accommodationTypes = [
-    'Studio',
-    'Apartment',
-    'House Share',
-    'Student Hall',
-    'Private Hall',
-    'Flat Share'
-  ];
-
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-2xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Submit Accommodation</h1>
-          <p className="mt-2 text-gray-600">List your property for students</p>
+    <div className="min-h-screen bg-gray-50 py-12">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-8">
+          <Link
+            href="/accommodation"
+            className="text-indigo-600 hover:text-indigo-500 flex items-center"
+          >
+            ← Back to Listings
+          </Link>
         </div>
 
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          {success ? (
-            <div className="rounded-md bg-green-50 p-4 mb-6">
+        <div className="bg-white shadow rounded-lg p-6">
+          <h1 className="text-2xl font-bold text-gray-900 mb-6">
+            Submit New Accommodation Listing
+          </h1>
+
+          {submitSuccess ? (
+            <div className="bg-green-50 border-l-4 border-green-400 p-4 mb-6">
               <div className="flex">
                 <div className="flex-shrink-0">
                   <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
@@ -99,218 +143,252 @@ export default function SubmitAccommodation() {
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm font-medium text-green-800">
-                    Listing submitted successfully!
+                  <p className="text-sm text-green-700">
+                    Listing submitted successfully! 
                   </p>
+                  <div className="mt-4">
+                    <Link
+                      href="/accommodation"
+                      className="text-sm font-medium text-green-700 hover:text-green-600"
+                    >
+                      View all listings →
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
-          ) : null}
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {submitError && (
+                <ErrorMessage 
+                  message={submitError}
+                  onRetry={() => setSubmitError(null)}
+                />
+              )}
 
-          {error ? (
-            <div className="rounded-md bg-red-50 p-4 mb-6">
-              <div className="flex">
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-red-800">{error}</p>
-                </div>
-              </div>
-            </div>
-          ) : null}
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              {/* Title */}
               <div>
                 <label htmlFor="title" className="block text-sm font-medium text-gray-700">
                   Title *
                 </label>
-                <div className="mt-1">
+                <input
+                  type="text"
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm ${
+                    errors.title 
+                      ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500'
+                  }`}
+                  placeholder="e.g., Cozy Studio in Carlton"
+                />
+                {errors.title && (
+                  <p className="mt-1 text-sm text-red-600">{errors.title}</p>
+                )}
+              </div>
+
+              {/* Location and Price Row */}
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div>
+                  <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+                    Suburb *
+                  </label>
                   <input
-                    id="title"
-                    name="title"
                     type="text"
-                    required
-                    value={formData.title}
+                    id="location"
+                    name="location"
+                    value={formData.location}
                     onChange={handleChange}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    placeholder="e.g., Modern Studio Apartment"
+                    className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm ${
+                      errors.location
+                        ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                        : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500'
+                    }`}
+                    placeholder="e.g., Carlton"
                   />
+                  {errors.location && (
+                    <p className="mt-1 text-sm text-red-600">{errors.location}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label htmlFor="price" className="block text-sm font-medium text-gray-700">
+                    Weekly Rent (AUD) *
+                  </label>
+                  <input
+                    type="number"
+                    id="price"
+                    name="price"
+                    value={formData.price}
+                    onChange={handleChange}
+                    min="0"
+                    step="0.01"
+                    className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm ${
+                      errors.price
+                        ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                        : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500'
+                    }`}
+                    placeholder="e.g., 300"
+                  />
+                  {errors.price && (
+                    <p className="mt-1 text-sm text-red-600">{errors.price}</p>
+                  )}
                 </div>
               </div>
 
-              <div>
-                <label htmlFor="type" className="block text-sm font-medium text-gray-700">
-                  Property Type *
-                </label>
-                <div className="mt-1">
+              {/* Type and Availability Row */}
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div>
+                  <label htmlFor="type" className="block text-sm font-medium text-gray-700">
+                    Room Type
+                  </label>
                   <select
                     id="type"
                     name="type"
-                    required
                     value={formData.type}
                     onChange={handleChange}
-                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   >
-                    <option value="">Select a type</option>
-                    {accommodationTypes.map(type => (
+                    {roomTypes.map((type) => (
                       <option key={type} value={type}>{type}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="availability" className="block text-sm font-medium text-gray-700">
+                    Availability
+                  </label>
+                  <select
+                    id="availability"
+                    name="availability"
+                    value={formData.availability}
+                    onChange={handleChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  >
+                    {availabilityOptions.map((option) => (
+                      <option key={option} value={option}>{option}</option>
                     ))}
                   </select>
                 </div>
               </div>
 
+              {/* Description */}
               <div>
-                <label htmlFor="location" className="block text-sm font-medium text-gray-700">
-                  Location *
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                  Description
                 </label>
-                <div className="mt-1">
-                  <input
-                    id="location"
-                    name="location"
-                    type="text"
-                    required
-                    value={formData.location}
-                    onChange={handleChange}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    placeholder="e.g., City Center"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label htmlFor="price" className="block text-sm font-medium text-gray-700">
-                  Price per Week (£) *
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="price"
-                    name="price"
-                    type="number"
-                    required
-                    min="0"
-                    step="0.01"
-                    value={formData.price}
-                    onChange={handleChange}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    placeholder="e.g., 150"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                Description
-              </label>
-              <div className="mt-1">
                 <textarea
                   id="description"
                   name="description"
-                  rows="4"
                   value={formData.description}
                   onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  placeholder="Describe your property..."
+                  rows={4}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  placeholder="Describe the accommodation, amenities, etc."
                 />
               </div>
-            </div>
 
-            <div className="bg-gray-50 p-4 rounded-md">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Contact Information</h3>
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div>
-                  <label htmlFor="contact_name" className="block text-sm font-medium text-gray-700">
-                    Contact Name *
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      id="contact_name"
-                      name="contact_name"
-                      type="text"
-                      required
-                      value={formData.contact_name}
-                      onChange={handleChange}
-                      className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      placeholder="Your name"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="contact_email" className="block text-sm font-medium text-gray-700">
-                    Contact Email *
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      id="contact_email"
-                      name="contact_email"
-                      type="email"
-                      required
-                      value={formData.contact_email}
-                      onChange={handleChange}
-                      className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      placeholder="your.email@example.com"
-                    />
-                  </div>
-                </div>
-
-                <div className="sm:col-span-2">
-                  <label htmlFor="contact_phone" className="block text-sm font-medium text-gray-700">
-                    Contact Phone
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      id="contact_phone"
-                      name="contact_phone"
-                      type="tel"
-                      value={formData.contact_phone}
-                      onChange={handleChange}
-                      className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      placeholder="+44 123 456 7890"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="image_url" className="block text-sm font-medium text-gray-700">
-                Image URL
-              </label>
-              <div className="mt-1">
+              {/* Image URL */}
+              <div>
+                <label htmlFor="image_url" className="block text-sm font-medium text-gray-700">
+                  Image URL (optional)
+                </label>
                 <input
+                  type="url"
                   id="image_url"
                   name="image_url"
-                  type="url"
                   value={formData.image_url}
                   onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   placeholder="https://example.com/image.jpg"
                 />
               </div>
-              <p className="mt-1 text-sm text-gray-500">
-                Provide a URL to an image of your property
-              </p>
-            </div>
 
-            <div className="flex items-center justify-between">
-              <button
-                type="submit"
-                disabled={loading}
-                className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-              >
-                {loading ? 'Submitting...' : 'Submit Listing'}
-              </button>
-            </div>
-          </form>
+              {/* Contact Information */}
+              <div className="space-y-6">
+                <h3 className="text-lg font-medium text-gray-900">Contact Information</h3>
+                
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <div>
+                    <label htmlFor="contact_name" className="block text-sm font-medium text-gray-700">
+                      Name *
+                    </label>
+                    <input
+                      type="text"
+                      id="contact_name"
+                      name="contact_name"
+                      value={formData.contact_name}
+                      onChange={handleChange}
+                      className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm ${
+                        errors.contact_name
+                          ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                          : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500'
+                      }`}
+                    />
+                    {errors.contact_name && (
+                      <p className="mt-1 text-sm text-red-600">{errors.contact_name}</p>
+                    )}
+                  </div>
 
-          <div className="mt-6">
-            <Link
-              href="/accommodation"
-              className="text-sm text-indigo-600 hover:text-indigo-500 flex items-center justify-center"
-            >
-              ← Back to Listings
-            </Link>
-          </div>
+                  <div>
+                    <label htmlFor="contact_email" className="block text-sm font-medium text-gray-700">
+                      Email *
+                    </label>
+                    <input
+                      type="email"
+                      id="contact_email"
+                      name="contact_email"
+                      value={formData.contact_email}
+                      onChange={handleChange}
+                      className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm ${
+                        errors.contact_email
+                          ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                          : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500'
+                      }`}
+                    />
+                    {errors.contact_email && (
+                      <p className="mt-1 text-sm text-red-600">{errors.contact_email}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="contact_phone" className="block text-sm font-medium text-gray-700">
+                    Phone Number (optional)
+                  </label>
+                  <input
+                    type="tel"
+                    id="contact_phone"
+                    name="contact_phone"
+                    value={formData.contact_phone}
+                    onChange={handleChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  />
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                >
+                  {loading ? (
+                    <>
+                      <LoadingSpinner size="sm" color="white" />
+                      <span className="ml-2">Submitting...</span>
+                    </>
+                  ) : (
+                    'Submit Listing'
+                  )}
+                </button>
+              </div>
+            </form>
+          )}
         </div>
       </div>
     </div>
