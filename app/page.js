@@ -278,7 +278,7 @@ export default function Home() {
               </h3>
             </div>
             <div className="p-4 space-y-3">
-              <Link href="/accommodations" className="flex items-center p-2 hover:bg-gray-50 rounded-md transition-colors group/item relative">
+              <Link href="/accommodation" className="flex items-center p-2 hover:bg-gray-50 rounded-md transition-colors group/item relative">
                 <svg className="h-5 w-5 text-blue-500 mr-3 group-hover/item:animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
