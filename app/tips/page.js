@@ -2,10 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
+import TestConnection from './test-connection';
 
 // Initialize Supabase client
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+// Add console logs to debug
+console.log('Supabase URL:', supabaseUrl);
+console.log('Supabase Key exists:', !!supabaseKey);
+
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default function TipsPage() {
@@ -14,11 +20,16 @@ export default function TipsPage() {
   const [error, setError] = useState(null);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [connectionError, setConnectionError] = useState(false);
 
   useEffect(() => {
     async function fetchTips() {
       try {
         setLoading(true);
+        
+        if (!supabaseUrl || !supabaseKey) {
+          throw new Error('Missing Supabase credentials. Please check your environment variables.');
+        }
         
         // Fetch tips from Supabase
         let query = supabase
@@ -32,10 +43,15 @@ export default function TipsPage() {
           query = query.eq('category', selectedCategory);
         }
         
+        console.log('Executing Supabase query...');
         const { data, error } = await query;
         
-        if (error) throw error;
+        if (error) {
+          console.error('Supabase error:', error);
+          throw error;
+        }
         
+        console.log('Fetched tips:', data);
         setTips(data || []);
         
         // Extract unique categories
@@ -43,7 +59,8 @@ export default function TipsPage() {
         setCategories(uniqueCategories);
       } catch (err) {
         console.error('Error fetching tips:', err);
-        setError('Failed to load tips. Please try again later.');
+        setError(err.message || 'Failed to load tips. Please try again later.');
+        setConnectionError(true);
       } finally {
         setLoading(false);
       }
@@ -62,6 +79,9 @@ export default function TipsPage() {
           Helpful advice from fellow students to enhance your university experience
         </p>
       </div>
+
+      {/* Connection Test */}
+      {connectionError && <TestConnection />}
 
       {/* Category Filter */}
       <div className="mb-8 flex flex-wrap justify-center gap-2">
