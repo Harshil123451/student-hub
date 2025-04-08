@@ -48,6 +48,19 @@ export default function Home() {
             Explore City Tips
           </Link>
         </div>
+        
+        {/* New to Melbourne Button */}
+        <div className="mt-8">
+          <Link
+            href="/starter-kit"
+            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-lg"
+          >
+            <svg className="mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            New to Melbourne? Start Here
+          </Link>
+        </div>
       </div>
 
       {/* Features Grid */}
