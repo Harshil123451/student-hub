@@ -184,7 +184,9 @@ export default function ExplorePage() {
           </div>
 
           {/* Restaurants Section */}
-          <RestaurantsSection location="Clayton" limit={5} />
+          <div className="col-span-2">
+            <RestaurantsSection initialLocation="Clayton" limit={5} />
+          </div>
         </div>
       )}
     </div>
