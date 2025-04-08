@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { requireAdmin } from '../../lib/adminUtils';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function AdminDashboard() {
   const [pendingTips, setPendingTips] = useState([]);
@@ -143,12 +144,26 @@ export default function AdminDashboard() {
         <div className="text-center mb-12">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900"
-            >
-              Sign Out
-            </button>
+            <div className="flex items-center space-x-4">
+              <Link
+                href="/signup"
+                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md"
+              >
+                Create User
+              </Link>
+              <Link
+                href="/login"
+                className="px-4 py-2 text-sm font-medium text-indigo-600 hover:text-indigo-900"
+              >
+                Login
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900"
+              >
+                Sign Out
+              </button>
+            </div>
           </div>
           <p className="mt-2 text-gray-600">Manage pending student tips</p>
         </div>
