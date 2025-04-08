@@ -19,6 +19,7 @@ export default function CityTips() {
         const { data, error } = await supabase
           .from('student_tips')
           .select('*')
+          .eq('approved', true)
           .order('id');
 
         if (error) throw error;

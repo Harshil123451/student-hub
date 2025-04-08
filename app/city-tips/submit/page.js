@@ -32,7 +32,10 @@ export default function SubmitTip() {
     try {
       const { error } = await supabase
         .from('student_tips')
-        .insert([formData]);
+        .insert([{
+          ...formData,
+          approved: false
+        }]);
 
       if (error) throw error;
 
@@ -68,7 +71,7 @@ export default function SubmitTip() {
                 </div>
                 <div className="ml-3">
                   <p className="text-sm font-medium text-green-800">
-                    Thank you! Your tip has been submitted successfully.
+                    Thank you! Your tip has been submitted and will be reviewed by our moderators.
                   </p>
                 </div>
               </div>
