@@ -60,6 +60,14 @@ export default function Accommodation() {
         <p className="mt-4 text-xl text-gray-600">
           Find your perfect student home
         </p>
+        <div className="mt-6">
+          <Link
+            href="/accommodation/submit"
+            className="inline-block bg-indigo-600 text-white py-2 px-6 rounded-md hover:bg-indigo-700 transition"
+          >
+            Submit a Listing
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
