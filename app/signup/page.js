@@ -1,94 +1,60 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabaseClient';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { requireAdmin } from '../../lib/adminUtils';
+import { supabase } from '../../lib/supabaseClient';
+import Link from 'next/link';
 
-export default function Signup() {
+export default function SignUp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [adminChecked, setAdminChecked] = useState(false);
+  const [message, setMessage] = useState(null);
   const router = useRouter();
 
-  // Check if current user is admin
-  useEffect(() => {
-    async function checkAdmin() {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-          router.push('/login');
-          return;
-        }
-
-        try {
-          requireAdmin(user.email);
-          setAdminChecked(true);
-        } catch (adminError) {
-          router.push('/login');
-        }
-      } catch (error) {
-        router.push('/login');
-      }
-    }
-
-    checkAdmin();
-  }, [router]);
-
-  const handleSignup = async (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setMessage(null);
 
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/login`
-        }
       });
 
       if (error) throw error;
 
-      // Clear form
-      setEmail('');
-      setPassword('');
-
-      // Show success message and redirect
-      alert('User created successfully! Redirecting to login...');
-      router.push('/login');
+      if (data?.session) {
+        // User is signed in (email confirmation disabled)
+        router.push('/admin');
+      } else {
+        // Email confirmation required
+        setMessage('Please check your email for the confirmation link.');
+        setTimeout(() => {
+          router.push('/login');
+        }, 3000);
+      }
     } catch (error) {
-      console.error('Error signing up:', error);
       setError(error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  // Show loading state while checking admin status
-  if (!adminChecked) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="flex justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
-          Create New User
+          Create your account
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
-          Admin-only: Create a new user account
+          Or{' '}
+          <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+            sign in to your account
+          </Link>
         </p>
       </div>
 
@@ -104,7 +70,17 @@ export default function Signup() {
             </div>
           )}
 
-          <form className="space-y-6" onSubmit={handleSignup}>
+          {message && (
+            <div className="rounded-md bg-green-50 p-4 mb-6">
+              <div className="flex">
+                <div className="ml-3">
+                  <p className="text-sm font-medium text-green-800">{message}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <form className="space-y-6" onSubmit={handleSignUp}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Email address
@@ -152,7 +128,7 @@ export default function Signup() {
                   loading ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >
-                {loading ? 'Creating user...' : 'Create User'}
+                {loading ? 'Creating account...' : 'Sign up'}
               </button>
             </div>
           </form>
