@@ -7,6 +7,11 @@ import { fetchStudentEvents, formatEventDate, getEventDateBadge } from '../lib/e
 export default function Home() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [quizStep, setQuizStep] = useState(1);
+  const [userSituation, setUserSituation] = useState('');
+  const [userNeeds, setUserNeeds] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
 
   useEffect(() => {
     async function fetchEvents() {
@@ -22,6 +27,98 @@ export default function Home() {
 
     fetchEvents();
   }, []);
+
+  const handleSituationSelect = (situation) => {
+    setUserSituation(situation);
+    setQuizStep(2);
+  };
+
+  const handleNeedToggle = (need) => {
+    if (userNeeds.includes(need)) {
+      setUserNeeds(userNeeds.filter(n => n !== need));
+    } else {
+      setUserNeeds([...userNeeds, need]);
+    }
+  };
+
+  const generateRecommendations = () => {
+    let recs = [];
+    
+    if (userSituation === 'new') {
+      recs.push({
+        title: 'Starter Kit',
+        description: 'Essential guide for new students in Melbourne',
+        link: '/starter-kit',
+        icon: '🚀'
+      });
+    }
+    
+    if (userSituation === 'planning') {
+      recs.push({
+        title: 'Checklist',
+        description: 'Visa and banking setup checklist',
+        link: '/checklist',
+        icon: '✅'
+      });
+    }
+    
+    if (userNeeds.includes('housing')) {
+      recs.push({
+        title: 'Accommodation',
+        description: 'Find student-friendly housing options',
+        link: '/accommodation',
+        icon: '🏠'
+      });
+    }
+    
+    if (userNeeds.includes('food')) {
+      recs.push({
+        title: 'Restaurants',
+        description: 'Find budget-friendly eats near you',
+        link: '/explore/restaurants',
+        icon: '🍽️'
+      });
+    }
+    
+    if (userNeeds.includes('documents')) {
+      recs.push({
+        title: 'Visa & Banking Checklist',
+        description: 'Essential steps for visa and banking setup',
+        link: '/checklist',
+        icon: '🧾'
+      });
+    }
+    
+    if (userNeeds.includes('social')) {
+      recs.push({
+        title: 'Events',
+        description: 'Find student events and social gatherings',
+        link: '/events',
+        icon: '🎉'
+      });
+    }
+    
+    // If no specific recommendations, suggest the starter kit
+    if (recs.length === 0) {
+      recs.push({
+        title: 'Starter Kit',
+        description: 'Essential guide for new students in Melbourne',
+        link: '/starter-kit',
+        icon: '🚀'
+      });
+    }
+    
+    setRecommendations(recs);
+    setQuizStep(3);
+  };
+
+  const resetQuiz = () => {
+    setQuizStep(1);
+    setUserSituation('');
+    setUserNeeds([]);
+    setRecommendations([]);
+    setShowQuiz(false);
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -216,7 +313,7 @@ export default function Home() {
         <div className="fixed bottom-8 right-8 z-50">
           <button 
             className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full p-4 shadow-lg flex items-center justify-center group transition-all duration-300 hover:scale-110"
-            onClick={() => alert('This feature will guide you through a mini quiz to find the most relevant resources for your needs.')}
+            onClick={() => setShowQuiz(true)}
           >
             <span className="text-2xl mr-2">❓</span>
             <span className="font-medium">Help Me Decide</span>
@@ -435,6 +532,145 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Quiz Modal */}
+      {showQuiz && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative">
+            <button 
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+              onClick={resetQuiz}
+            >
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            
+            <h3 className="text-xl font-bold text-gray-900 mb-4">Let's find what you need</h3>
+            
+            {/* Step 1: Situation */}
+            {quizStep === 1 && (
+              <div>
+                <p className="mb-4 text-gray-600">What's your current situation?</p>
+                <div className="grid grid-cols-1 gap-3">
+                  <button 
+                    className="flex items-center p-3 border rounded-lg hover:bg-indigo-50 transition-colors"
+                    onClick={() => handleSituationSelect('new')}
+                  >
+                    <span className="text-2xl mr-3">🚀</span>
+                    <div className="text-left">
+                      <p className="font-medium">New to Melbourne</p>
+                      <p className="text-sm text-gray-500">Just arrived or about to arrive</p>
+                    </div>
+                  </button>
+                  <button 
+                    className="flex items-center p-3 border rounded-lg hover:bg-indigo-50 transition-colors"
+                    onClick={() => handleSituationSelect('studying')}
+                  >
+                    <span className="text-2xl mr-3">📚</span>
+                    <div className="text-left">
+                      <p className="font-medium">Currently Studying</p>
+                      <p className="text-sm text-gray-500">Already a student in Melbourne</p>
+                    </div>
+                  </button>
+                  <button 
+                    className="flex items-center p-3 border rounded-lg hover:bg-indigo-50 transition-colors"
+                    onClick={() => handleSituationSelect('planning')}
+                  >
+                    <span className="text-2xl mr-3">📅</span>
+                    <div className="text-left">
+                      <p className="font-medium">Planning to Study</p>
+                      <p className="text-sm text-gray-500">Future student preparing</p>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            )}
+            
+            {/* Step 2: Needs */}
+            {quizStep === 2 && (
+              <div>
+                <p className="mb-4 text-gray-600">What do you need help with?</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <button 
+                    className={`flex flex-col items-center p-3 border rounded-lg transition-colors ${userNeeds.includes('housing') ? 'bg-indigo-100 border-indigo-300' : 'hover:bg-indigo-50'}`}
+                    onClick={() => handleNeedToggle('housing')}
+                  >
+                    <span className="text-2xl mb-1">🏠</span>
+                    <p className="font-medium text-sm">Housing</p>
+                  </button>
+                  <button 
+                    className={`flex flex-col items-center p-3 border rounded-lg transition-colors ${userNeeds.includes('food') ? 'bg-indigo-100 border-indigo-300' : 'hover:bg-indigo-50'}`}
+                    onClick={() => handleNeedToggle('food')}
+                  >
+                    <span className="text-2xl mb-1">🍽️</span>
+                    <p className="font-medium text-sm">Food</p>
+                  </button>
+                  <button 
+                    className={`flex flex-col items-center p-3 border rounded-lg transition-colors ${userNeeds.includes('documents') ? 'bg-indigo-100 border-indigo-300' : 'hover:bg-indigo-50'}`}
+                    onClick={() => handleNeedToggle('documents')}
+                  >
+                    <span className="text-2xl mb-1">📄</span>
+                    <p className="font-medium text-sm">Documents</p>
+                  </button>
+                  <button 
+                    className={`flex flex-col items-center p-3 border rounded-lg transition-colors ${userNeeds.includes('social') ? 'bg-indigo-100 border-indigo-300' : 'hover:bg-indigo-50'}`}
+                    onClick={() => handleNeedToggle('social')}
+                  >
+                    <span className="text-2xl mb-1">👥</span>
+                    <p className="font-medium text-sm">Social</p>
+                  </button>
+                </div>
+                <div className="mt-6 flex justify-between">
+                  <button 
+                    className="text-indigo-600 hover:text-indigo-800"
+                    onClick={() => setQuizStep(1)}
+                  >
+                    ← Back
+                  </button>
+                  <button 
+                    className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+                    onClick={generateRecommendations}
+                  >
+                    Find Resources
+                  </button>
+                </div>
+              </div>
+            )}
+            
+            {/* Step 3: Recommendations */}
+            {quizStep === 3 && (
+              <div>
+                <p className="mb-4 text-gray-600">Here are the best resources for you:</p>
+                <div className="space-y-3">
+                  {recommendations.map((rec, index) => (
+                    <Link 
+                      key={index}
+                      href={rec.link}
+                      className="flex items-center p-3 border rounded-lg hover:bg-indigo-50 transition-colors"
+                      onClick={resetQuiz}
+                    >
+                      <span className="text-2xl mr-3">{rec.icon}</span>
+                      <div className="text-left">
+                        <p className="font-medium">{rec.title}</p>
+                        <p className="text-sm text-gray-500">{rec.description}</p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+                <div className="mt-6 flex justify-end">
+                  <button 
+                    className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+                    onClick={resetQuiz}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 } 
