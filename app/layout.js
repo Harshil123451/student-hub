@@ -4,6 +4,7 @@ import { AuthProvider } from '../components/AuthProvider';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import dynamic from 'next/dynamic';
+import GoogleAnalytics from './components/GoogleAnalytics';
 
 const ErrorBoundary = dynamic(() => import('./components/ErrorBoundary'), { ssr: false });
 
@@ -23,6 +24,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${inter.variable} ${comicNeue.variable} font-sans`}>
+        {process.env.NODE_ENV === 'production' && <GoogleAnalytics />}
         <ErrorBoundary>
           <AuthProvider>
             <Navbar />
