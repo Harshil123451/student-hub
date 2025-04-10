@@ -15,7 +15,7 @@ export default function MemeVault({ mood }) {
     try {
       setIsLoading(true);
       setError(null);
-      const response = await fetch('https://meme-api.com/gimme/collegememes/5');
+      const response = await fetch('https://meme-api.com/gimme/collegememes/6');
       if (!response.ok) throw new Error('Failed to fetch memes');
       const data = await response.json();
       if (data.memes && Array.isArray(data.memes)) {
@@ -80,7 +80,7 @@ export default function MemeVault({ mood }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <AnimatePresence>
             {isLoading ? (
-              Array(4).fill(0).map((_, index) => (
+              Array(6).fill(0).map((_, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0 }}
