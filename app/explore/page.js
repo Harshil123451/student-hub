@@ -5,12 +5,16 @@ import Link from 'next/link';
 import { supabase } from '../../lib/supabaseClient';
 import { fetchStudentEvents, formatEventDate, getEventDateBadge } from '../../lib/eventbriteApi';
 import RestaurantsSection from '../../components/RestaurantsSection';
+import Image from 'next/image';
+
+const fallbackImage = '/images/placeholder.jpg';
 
 export default function ExplorePage() {
   const [trendingTips, setTrendingTips] = useState([]);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [popularListings, setPopularListings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [imageErrors, setImageErrors] = useState({});
 
   useEffect(() => {
     async function fetchData() {
@@ -48,6 +52,10 @@ export default function ExplorePage() {
 
     fetchData();
   }, []);
+
+  const handleImageError = (id) => {
+    setImageErrors(prev => ({ ...prev, [id]: true }));
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -151,14 +159,13 @@ export default function ExplorePage() {
                   popularListings.map((listing) => (
                     <div key={listing.id} className="flex space-x-4">
                       <div className="flex-shrink-0">
-                        <img
-                          className="h-16 w-16 rounded-md object-cover"
-                          src={listing.image_url || 'https://via.placeholder.com/150'}
+                        <Image
+                          src={imageErrors[listing.id] ? fallbackImage : listing.image_url || 'https://via.placeholder.com/150'}
                           alt={listing.title}
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = 'https://via.placeholder.com/150?text=No+Image';
-                          }}
+                          width={64}
+                          height={64}
+                          className="h-16 w-16 rounded-md object-cover"
+                          onError={() => handleImageError(listing.id)}
                         />
                       </div>
                       <div className="flex-1 min-w-0">

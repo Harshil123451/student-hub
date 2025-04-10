@@ -1,13 +1,61 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { ErrorBoundary } from 'react-error-boundary';
+
+function ErrorFallback({ error, resetErrorBoundary }) {
+  return (
+    <div className="bg-red-50 p-4 rounded-md">
+      <div className="flex">
+        <div className="flex-shrink-0">
+          <svg className="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <div className="ml-3">
+          <h3 className="text-sm font-medium text-red-800">Something went wrong</h3>
+          <p className="text-sm text-red-700 mt-1">{error.message}</p>
+          <button
+            onClick={resetErrorBoundary}
+            className="mt-2 text-sm text-red-600 hover:text-red-500"
+          >
+            Try again
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LoadingPlaceholder() {
+  return (
+    <div className="animate-pulse space-y-4">
+      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+      <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+      <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+    </div>
+  );
+}
+
+function SectionContent({ content, isLoading, error }) {
+  if (isLoading) return <LoadingPlaceholder />;
+  if (error) return <div className="text-red-600">Error loading content</div>;
+  return content;
+}
 
 export default function StarterKit() {
   const [openSection, setOpenSection] = useState('sim-card');
+  const [loadingStates, setLoadingStates] = useState({});
+  const [errorStates, setErrorStates] = useState({});
 
   const toggleSection = (section) => {
     setOpenSection(openSection === section ? null : section);
+    // Simulate loading state
+    setLoadingStates(prev => ({ ...prev, [section]: true }));
+    setTimeout(() => {
+      setLoadingStates(prev => ({ ...prev, [section]: false }));
+    }, 500);
   };
 
   const sections = [
@@ -318,39 +366,49 @@ export default function StarterKit() {
 
       <div className="space-y-4">
         {sections.map((section) => (
-          <div key={section.id} className="bg-white shadow overflow-hidden rounded-lg">
-            <button
-              onClick={() => toggleSection(section.id)}
-              className="w-full px-6 py-4 flex justify-between items-center focus:outline-none"
-            >
-              <div className="flex items-center">
-                <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-md bg-indigo-100 text-indigo-600">
-                  {section.icon}
-                </div>
-                <h2 className="ml-4 text-lg font-medium text-gray-900">{section.title}</h2>
-              </div>
-              <svg
-                className={`h-5 w-5 text-gray-500 transform transition-transform ${
-                  openSection === section.id ? 'rotate-180' : ''
-                }`}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+          <ErrorBoundary
+            key={section.id}
+            FallbackComponent={ErrorFallback}
+            onReset={() => setErrorStates(prev => ({ ...prev, [section.id]: false }))}
+          >
+            <div className="bg-white shadow overflow-hidden rounded-lg">
+              <button
+                onClick={() => toggleSection(section.id)}
+                className="w-full px-6 py-4 flex justify-between items-center focus:outline-none"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            
-            {openSection === section.id && (
-              <div className="px-6 pb-6">
-                {section.content}
-              </div>
-            )}
-          </div>
+                <div className="flex items-center">
+                  <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-md bg-indigo-100 text-indigo-600">
+                    {section.icon}
+                  </div>
+                  <h2 className="ml-4 text-lg font-medium text-gray-900">{section.title}</h2>
+                </div>
+                <svg
+                  className={`h-5 w-5 text-gray-500 transform transition-transform ${
+                    openSection === section.id ? 'rotate-180' : ''
+                  }`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              {openSection === section.id && (
+                <div className="px-6 pb-6">
+                  <SectionContent
+                    content={section.content}
+                    isLoading={loadingStates[section.id]}
+                    error={errorStates[section.id]}
+                  />
+                </div>
+              )}
+            </div>
+          </ErrorBoundary>
         ))}
       </div>
 
-      <div className="mt-12 text-center">
+      <div className="mt-8 text-center">
         <Link
           href="/city-tips"
           className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
