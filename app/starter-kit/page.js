@@ -352,10 +352,10 @@ export default function StarterKit() {
 
       <div className="mt-12 text-center">
         <Link
-          href="/explore"
+          href="/city-tips"
           className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
-          Explore More Resources
+          📘 Student Tips
         </Link>
       </div>
     </div>
