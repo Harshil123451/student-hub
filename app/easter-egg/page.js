@@ -1,5 +1,6 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import StudySpot from '@/components/easter-egg/StudySpot';
 import MemeVault from '@/components/easter-egg/MemeVault';
@@ -14,8 +15,10 @@ export default function EasterEgg() {
   const [mood, setMood] = useState('chill');
   const [konamiCode, setKonamiCode] = useState([]);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    setIsVisible(true);
     const handleKeyDown = (e) => {
       const code = [...konamiCode, e.key];
       if (code.length > 10) code.shift();
@@ -32,43 +35,74 @@ export default function EasterEgg() {
   }, [konamiCode]);
 
   return (
-    <div className={`min-h-screen p-8 transition-colors duration-300 ${
-      mood === 'chill' ? 'bg-pastel-blue' : 'bg-pastel-pink'
-    }`}>
-      <div className="max-w-6xl mx-auto">
-        <header className="mb-12 text-center">
-          <h1 className="text-4xl font-display mb-4">👻 Secret Student Lounge</h1>
-          <p className="text-lg opacity-80">A cozy corner for students to relax and connect</p>
-        </header>
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className={`min-h-screen p-8 transition-colors duration-300 ${
+        mood === 'chill' ? 'bg-gradient-to-br from-pastel-blue to-pastel-blue/50' : 'bg-gradient-to-br from-pastel-pink to-pastel-pink/50'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto">
+        <motion.header 
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="mb-12 text-center"
+        >
+          <h1 className="text-5xl font-display mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
+            👻 Secret Student Lounge
+          </h1>
+          <p className="text-xl opacity-80">A cozy corner for students to relax and connect</p>
+        </motion.header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-8"
+        >
           <StudySpot mood={mood} />
           <MemeVault mood={mood} />
           <TimeCapsule mood={mood} />
           <Confessions mood={mood} />
-        </div>
+        </motion.div>
 
-        <div className="mt-8 flex justify-between items-center">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8"
+        >
           <PixelPet mood={mood} />
           <StudentTrivia mood={mood} />
-        </div>
+        </motion.div>
 
-        <div className="fixed bottom-4 right-4 flex gap-4">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="fixed bottom-8 right-8 flex gap-4"
+        >
           <MoodToggle mood={mood} setMood={setMood} />
           <Link 
             href="/"
-            className="px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+            className="px-6 py-3 rounded-full bg-white/20 hover:bg-white/30 transition-colors backdrop-blur-sm"
           >
             Return Home
           </Link>
-        </div>
+        </motion.div>
 
         {showConfetti && (
-          <div className="fixed inset-0 pointer-events-none">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 pointer-events-none"
+          >
             {/* Confetti animation will go here */}
-          </div>
+          </motion.div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 } 
