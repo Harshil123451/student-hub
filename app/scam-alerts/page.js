@@ -6,6 +6,8 @@ import Link from 'next/link';
 export default function ScamAlerts() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const alertsPerPage = 5;
 
   const scamCategories = [
     { id: 'all', name: 'All Scams', icon: '🔍' },
@@ -156,6 +158,14 @@ export default function ScamAlerts() {
     return matchesCategory && matchesSearch;
   });
 
+  // Calculate pagination
+  const indexOfLastAlert = currentPage * alertsPerPage;
+  const indexOfFirstAlert = indexOfLastAlert - alertsPerPage;
+  const currentAlerts = filteredScams.slice(indexOfFirstAlert, indexOfLastAlert);
+  const totalPages = Math.ceil(filteredScams.length / alertsPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   const getSeverityColor = (severity) => {
     switch (severity) {
       case 'high':
@@ -204,7 +214,10 @@ export default function ScamAlerts() {
           {scamCategories.map((category) => (
             <button
               key={category.id}
-              onClick={() => setActiveCategory(category.id)}
+              onClick={() => {
+                setActiveCategory(category.id);
+                setCurrentPage(1); // Reset to first page when changing category
+              }}
               className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
                 activeCategory === category.id
                   ? 'bg-indigo-600 text-white'
@@ -219,8 +232,8 @@ export default function ScamAlerts() {
 
       {/* Scam Alerts */}
       <div className="grid grid-cols-1 gap-6">
-        {filteredScams.length > 0 ? (
-          filteredScams.map((scam) => (
+        {currentAlerts.length > 0 ? (
+          currentAlerts.map((scam) => (
             <div key={scam.id} className="bg-white overflow-hidden shadow rounded-lg">
               <div className="px-4 py-5 sm:p-6">
                 <div className="flex items-center justify-between">
@@ -272,6 +285,51 @@ export default function ScamAlerts() {
           </div>
         )}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-8 flex justify-center">
+          <nav className="flex items-center space-x-2">
+            <button
+              onClick={() => paginate(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1}
+              className={`px-3 py-1 rounded-md ${
+                currentPage === 1
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-white text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              Previous
+            </button>
+            
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
+              <button
+                key={number}
+                onClick={() => paginate(number)}
+                className={`px-3 py-1 rounded-md ${
+                  currentPage === number
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-white text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                {number}
+              </button>
+            ))}
+            
+            <button
+              onClick={() => paginate(Math.min(totalPages, currentPage + 1))}
+              disabled={currentPage === totalPages}
+              className={`px-3 py-1 rounded-md ${
+                currentPage === totalPages
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-white text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              Next
+            </button>
+          </nav>
+        </div>
+      )}
 
       {/* Emergency Contacts */}
       <div className="mt-12 bg-indigo-50 rounded-lg p-6">

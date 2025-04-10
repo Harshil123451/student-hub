@@ -1,16 +1,29 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 export default function Checklist() {
   const [completedItems, setCompletedItems] = useState({});
 
+  useEffect(() => {
+    // Load completed items from localStorage on mount
+    const savedItems = localStorage.getItem('checklistCompletedItems');
+    if (savedItems) {
+      setCompletedItems(JSON.parse(savedItems));
+    }
+  }, []);
+
   const toggleItem = (id) => {
-    setCompletedItems(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
+    setCompletedItems(prev => {
+      const newItems = {
+        ...prev,
+        [id]: !prev[id]
+      };
+      // Save to localStorage whenever items change
+      localStorage.setItem('checklistCompletedItems', JSON.stringify(newItems));
+      return newItems;
+    });
   };
 
   const visaChecklist = [
