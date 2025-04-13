@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { fetchStudentEvents, formatEventDate, getEventDateBadge } from '../lib/eventbriteApi';
+import { getDailyMeme } from '@/utils/getDailyMeme';
+import { motion } from 'framer-motion';
+import MemeOfTheDay from '@/components/MemeOfTheDay';
 
 export default function Home() {
   const [events, setEvents] = useState([]);
@@ -12,6 +15,7 @@ export default function Home() {
   const [userSituation, setUserSituation] = useState('');
   const [userNeeds, setUserNeeds] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
+  const [dailyMeme, setDailyMeme] = useState(null);
 
   useEffect(() => {
     async function fetchEvents() {
@@ -26,6 +30,14 @@ export default function Home() {
     }
 
     fetchEvents();
+  }, []);
+
+  useEffect(() => {
+    const loadDailyMeme = async () => {
+      const meme = await getDailyMeme();
+      setDailyMeme(meme);
+    };
+    loadDailyMeme();
   }, []);
 
   const handleSituationSelect = (situation) => {
@@ -532,6 +544,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Meme of the Day Section */}
+      <MemeOfTheDay />
 
       {/* Quiz Modal */}
       {showQuiz && (
