@@ -27,7 +27,7 @@ const quickLinks = [
 const socialLinks = [
   {
     name: 'Instagram',
-    href: '#',
+    href: 'https://www.instagram.com/harshil._.chheda/',
     icon: (props) => (
       <svg fill="currentColor" viewBox="0 0 24 24" {...props}>
         <path
