@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ErrorBoundary } from 'react-error-boundary';
+import VirtualSuitcase from '../components/VirtualSuitcase';
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -356,56 +357,55 @@ export default function StarterKit() {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="text-center mb-12">
-        <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">Melbourne Student Starter Kit</h1>
-        <p className="mt-3 text-xl text-gray-500">
-          Everything you need to know as a new student in Melbourne
-        </p>
-      </div>
-
-      <div className="space-y-4">
-        {sections.map((section) => (
-          <ErrorBoundary
-            key={section.id}
-            FallbackComponent={ErrorFallback}
-            onReset={() => setErrorStates(prev => ({ ...prev, [section.id]: false }))}
-          >
-            <div className="bg-white shadow overflow-hidden rounded-lg">
-              <button
-                onClick={() => toggleSection(section.id)}
-                className="w-full px-6 py-4 flex justify-between items-center focus:outline-none"
-              >
-                <div className="flex items-center">
-                  <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-md bg-indigo-100 text-indigo-600">
-                    {section.icon}
-                  </div>
-                  <h2 className="ml-4 text-lg font-medium text-gray-900">{section.title}</h2>
-                </div>
-                <svg
-                  className={`h-5 w-5 text-gray-500 transform transition-transform ${
-                    openSection === section.id ? 'rotate-180' : ''
-                  }`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <VirtualSuitcase />
+      
+      <div className="mt-12">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">Starter Kit</h1>
+        
+        <div className="space-y-4">
+          {sections.map((section) => (
+            <ErrorBoundary
+              key={section.id}
+              FallbackComponent={ErrorFallback}
+              onReset={() => setErrorStates(prev => ({ ...prev, [section.id]: false }))}
+            >
+              <div className="bg-white shadow overflow-hidden rounded-lg">
+                <button
+                  onClick={() => toggleSection(section.id)}
+                  className="w-full px-6 py-4 flex justify-between items-center focus:outline-none"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              
-              {openSection === section.id && (
-                <div className="px-6 pb-6">
-                  <SectionContent
-                    content={section.content}
-                    isLoading={loadingStates[section.id]}
-                    error={errorStates[section.id]}
-                  />
-                </div>
-              )}
-            </div>
-          </ErrorBoundary>
-        ))}
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-md bg-indigo-100 text-indigo-600">
+                      {section.icon}
+                    </div>
+                    <h2 className="ml-4 text-lg font-medium text-gray-900">{section.title}</h2>
+                  </div>
+                  <svg
+                    className={`h-5 w-5 text-gray-500 transform transition-transform ${
+                      openSection === section.id ? 'rotate-180' : ''
+                    }`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                
+                {openSection === section.id && (
+                  <div className="px-6 pb-6">
+                    <SectionContent
+                      content={section.content}
+                      isLoading={loadingStates[section.id]}
+                      error={errorStates[section.id]}
+                    />
+                  </div>
+                )}
+              </div>
+            </ErrorBoundary>
+          ))}
+        </div>
       </div>
 
       <div className="mt-8 text-center">
