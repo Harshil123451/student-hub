@@ -12,6 +12,7 @@ import {
   ClipboardDocumentCheckIcon,
   UserGroupIcon,
 } from '@heroicons/react/24/outline';
+import { getTodaysBlurb } from '../footer-blurbs';
 
 const quickLinks = [
   { name: 'Home', href: '/', icon: HomeIcon },
@@ -163,6 +164,9 @@ export default function Footer() {
 
         {/* Footer Bottom Bar */}
         <div className="pt-8 mt-8 border-t border-gray-800 text-center">
+          <p className="text-gray-400 text-sm mb-4 italic">
+            {getTodaysBlurb()}
+          </p>
           <p className="text-gray-400 text-sm">
             © {new Date().getFullYear()} Student Hub. All rights reserved.
           </p>
