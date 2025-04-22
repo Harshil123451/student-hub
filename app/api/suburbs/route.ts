@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { melbourneSuburbs } from '@/data/melbourneSuburbs';
+import { melbourneSuburbs } from '../../../data/melbourneSuburbs';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
