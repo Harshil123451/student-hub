@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { SuburbData } from '@/data/melbourneSuburbs';
+import { SuburbData } from '../data/melbourneSuburbs';
 
 interface SuburbCardProps {
   suburb: SuburbData;
@@ -40,40 +40,19 @@ export function SuburbCard({ suburb }: SuburbCardProps) {
 
         {isExpanded && (
           <div className="mt-4 pt-4 border-t">
-            <h3 className="font-medium mb-2">Education Levels</h3>
-            <div className="space-y-1">
-              <div className="flex justify-between">
-                <span>High School</span>
-                <span>{suburb.educationLevels.highSchool}%</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Bachelor</span>
-                <span>{suburb.educationLevels.bachelor}%</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Postgraduate</span>
-                <span>{suburb.educationLevels.postgraduate}%</span>
-              </div>
-            </div>
+            <h3 className="font-medium mb-2">Education Level</h3>
+            <p className="text-gray-600">{suburb.educationLevel}</p>
 
             <h3 className="font-medium mt-4 mb-2">Transport Modes</h3>
-            <div className="space-y-1">
-              <div className="flex justify-between">
-                <span>Public Transport</span>
-                <span>{suburb.transportModes.publicTransport}%</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Car</span>
-                <span>{suburb.transportModes.car}%</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Walking</span>
-                <span>{suburb.transportModes.walking}%</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Cycling</span>
-                <span>{suburb.transportModes.cycling}%</span>
-              </div>
+            <div className="flex flex-wrap gap-2">
+              {suburb.transportModes.map((mode) => (
+                <span
+                  key={mode}
+                  className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded"
+                >
+                  {mode}
+                </span>
+              ))}
             </div>
 
             <div className="mt-4 text-sm text-gray-600">
