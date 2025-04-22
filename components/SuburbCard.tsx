@@ -1,36 +1,15 @@
 import { useState } from 'react';
+import { SuburbData } from '@/data/melbourneSuburbs';
 
 interface SuburbCardProps {
-  suburb: {
-    suburbName: string;
-    population: number;
-    medianRent: number;
-    distanceToCBD: number;
-    educationLevels: {
-      highSchool: number;
-      bachelor: number;
-      postgraduate: number;
-    };
-    employmentRate: number;
-    transportModes: {
-      publicTransport: number;
-      car: number;
-      walking: number;
-      cycling: number;
-    };
-    postcode: string;
-    localGovernmentArea: string;
-    latitude: number;
-    longitude: number;
-  };
+  suburb: SuburbData;
 }
 
 export function SuburbCard({ suburb }: SuburbCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div 
-      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer"
       onClick={() => setIsExpanded(!isExpanded)}
     >
       <div className="p-6">
