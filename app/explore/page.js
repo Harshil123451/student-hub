@@ -7,7 +7,13 @@ import { fetchStudentEvents, formatEventDate, getEventDateBadge } from '../../li
 import RestaurantsSection from '../../components/RestaurantsSection';
 import Image from 'next/image';
 
-const fallbackImage = '/images/placeholder.jpg';
+const fallbackImage = '/images/placeholder.png';
+
+const categoryIcons = {
+  Transport: '🚍',
+  Food: '🍜',
+  Study: '📖'
+};
 
 export default function ExplorePage() {
   const [trendingTips, setTrendingTips] = useState([]);
@@ -32,7 +38,7 @@ export default function ExplorePage() {
 
         // Fetch popular listings from Supabase
         const { data: listingsData, error: listingsError } = await supabase
-          .from('accommodations')
+          .from('listings')
           .select('*')
           .order('created_at', { ascending: false })
           .limit(3);
@@ -40,9 +46,13 @@ export default function ExplorePage() {
         if (listingsError) throw listingsError;
         setPopularListings(listingsData || []);
 
-        // Fetch events from Eventbrite API
-        const events = await fetchStudentEvents(6);
-        setUpcomingEvents(events);
+        // Fetch events from Eventbrite API for next 15 days
+        const events = await fetchStudentEvents('15days');
+        // Filter out past events and limit to 3
+        const filteredEvents = events
+          .filter(event => new Date(event.start.utc) >= new Date())
+          .slice(0, 3);
+        setUpcomingEvents(filteredEvents);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -56,6 +66,25 @@ export default function ExplorePage() {
   const handleImageError = (id) => {
     setImageErrors(prev => ({ ...prev, [id]: true }));
   };
+
+  const HouseIcon = () => (
+    <div className="h-16 w-16 rounded-md bg-gray-100 flex items-center justify-center">
+      <svg 
+        className="h-8 w-8 text-gray-400" 
+        xmlns="http://www.w3.org/2000/svg" 
+        fill="none" 
+        viewBox="0 0 24 24" 
+        stroke="currentColor"
+      >
+        <path 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          strokeWidth={1.5} 
+          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" 
+        />
+      </svg>
+    </div>
+  );
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -80,11 +109,19 @@ export default function ExplorePage() {
                 {trendingTips.length > 0 ? (
                   trendingTips.map((tip) => (
                     <div key={tip.id} className="border-b border-gray-200 pb-4 last:border-b-0 last:pb-0">
-                      <h3 className="font-medium text-gray-900">{tip.title}</h3>
-                      <p className="text-sm text-gray-500 mt-1">{tip.content}</p>
-                      <p className="text-xs text-gray-400 mt-2">
-                        {new Date(tip.created_at).toLocaleDateString()}
-                      </p>
+                      <div className="flex items-center mb-2">
+                        <span className="mr-2 text-xl">{categoryIcons[tip.category] || '📌'}</span>
+                        <span className="text-sm font-medium text-gray-500">{tip.category}</span>
+                      </div>
+                      <p className="text-sm text-gray-700">{tip.tip}</p>
+                      <div className="mt-2 flex justify-end">
+                        <Link
+                          href="/city-tips"
+                          className="text-sm text-indigo-600 hover:text-indigo-900"
+                        >
+                          View All Tips →
+                        </Link>
+                      </div>
                     </div>
                   ))
                 ) : (
@@ -159,14 +196,18 @@ export default function ExplorePage() {
                   popularListings.map((listing) => (
                     <div key={listing.id} className="flex space-x-4">
                       <div className="flex-shrink-0">
-                        <Image
-                          src={imageErrors[listing.id] ? fallbackImage : listing.image_url || 'https://via.placeholder.com/150'}
-                          alt={listing.title}
-                          width={64}
-                          height={64}
-                          className="h-16 w-16 rounded-md object-cover"
-                          onError={() => handleImageError(listing.id)}
-                        />
+                        {listing.image_url && !imageErrors[listing.id] ? (
+                          <Image
+                            src={listing.image_url.startsWith('http') ? listing.image_url : `/${listing.image_url}`}
+                            alt={listing.title}
+                            width={64}
+                            height={64}
+                            className="h-16 w-16 rounded-md object-cover"
+                            onError={() => handleImageError(listing.id)}
+                          />
+                        ) : (
+                          <HouseIcon />
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <h3 className="font-medium text-gray-900 truncate">{listing.title}</h3>
