@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { SuburbCard } from '@/components/SuburbCard';
-import { SearchBar } from '@/components/SearchBar';
-import { SortDropdown } from '@/components/SortDropdown';
-import { SuburbData } from '@/data/melbourneSuburbs';
+import { SuburbCard } from '../../../components/SuburbCard';
+import { SearchBar } from '../../../components/SearchBar';
+import { SortDropdown } from '../../../components/SortDropdown';
+import { SuburbData } from '../../../data/melbourneSuburbs';
 
 export default function SuburbsPage() {
   const [searchQuery, setSearchQuery] = useState('');
